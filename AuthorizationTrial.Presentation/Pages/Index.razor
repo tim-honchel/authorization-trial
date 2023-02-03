@@ -1,0 +1,42 @@
+﻿@page "/"
+
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using AuthorizationTrial.Presentation.Areas.Identity
+@using AuthorizationTrial.Presentation.Areas.Identity.Pages
+@using System.Security.Claims;
+@inject AuthenticationStateProvider Provider
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+<p><span style="font-weight:bold">UserId:</span> @userId</p>
+
+@code
+{
+    public string userId;
+    public IEnumerable<Claim> claims;
+    protected override async Task OnParametersSetAsync()
+    {
+        // get from claim
+        try
+        {
+            userId = Provider.GetAuthenticationStateAsync().Result.User.Claims.Where(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").FirstOrDefault().Value;
+        }
+        catch (NullReferenceException)
+        {
+            userId = "unavailable";
+        }
+
+    }
+
+}
